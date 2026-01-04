@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Absolute Solver — Department of Technology</title>
+  <link rel="icon" type="image/png" href="icon.png">
+  <style>
+    :root {
+      --bg: #0b0b0b;
+      --fg: #f0f0f0;
+      --muted: #b5b5b5;
+      --accent: #ffffff;
+      --green: #4cff6a;
+      --red: #ff4c4c;
+      --yellow: #ffd24c;
+      --scanline: rgba(255,255,255,0.04);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: "Courier New", Courier, monospace;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 2px,
+        var(--scanline) 3px
+      );
+      mix-blend-mode: overlay;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 2rem;
+      padding: 3rem;
+      border-bottom: 1px solid #222;
+    }
+
+    .seal { width: 220px; opacity: 0.85; }
+
+    h1, h2 { margin: 0 0 1rem 0; letter-spacing: 0.08em; font-weight: normal; }
+
+    .codename { margin-top: 1rem; font-size: 1.1rem; }
+
+    .tag {
+      display: inline-block;
+      border: 1px solid var(--fg);
+      padding: 0.2rem 0.5rem;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+    }
+
+    .status {
+      margin-top: 1rem;
+      padding: 0.4rem 0.8rem;
+      display: inline-block;
+      border: 1px solid;
+    }
+
+    .status.operational { color: var(--green); border-color: var(--green); }
+    .status.development { color: var(--yellow); border-color: var(--yellow); }
+    .status.locked { color: var(--red); border-color: var(--red); }
+
+    main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      padding: 3rem;
+    }
+
+    section { border: 1px solid #222; padding: 1.5rem; }
+
+    .label { color: var(--muted); }
+
+    .logo-block {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px dashed #333;
+      padding: 2rem;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      padding: 0.6rem 1.2rem;
+      background: #111;
+      color: #fff;
+      border: 1px solid #444;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .progress {
+      margin-top: 1.5rem;
+      border: 1px solid #333;
+      padding: 1rem;
+      font-size: 0.85rem;
+    }
+
+    .bar {
+      height: 10px;
+      background: #222;
+      margin-top: 0.5rem;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      transition: width 1s linear;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .modal-content {
+      border: 1px solid var(--red);
+      padding: 2rem;
+      color: var(--red);
+      background: #050505;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    footer { padding: 2rem 3rem; border-top: 1px solid #222; color: var(--muted); font-size: 0.85rem; }
+
+    @media (max-width: 900px) {
+      header, main { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <img class="seal" src="official_seal.jpg" alt="Department Seal" />
+    </div>
+    <div>
+      <h1>DEPARTMENT OF TECHNOLOGY PROJECT</h1>
+      <div class="codename">CODENAME: «ABSOLUTE SOLVER»</div>
+      <div class="tag">TOP SECRET</div>
+      <div class="status development" id="status-box">STATUS: IN DEVELOPMENT</div>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>PROJECT OVERVIEW</h2>
+      <p class="label">Established:</p>
+      <p>2025</p>
+
+      <p class="label">Project Leader:</p>
+      <p>KAS SynthWorks</p>
+
+      <p class="label">Assistant Leader:</p>
+      <p>Unspecified</p>
+
+      <p class="label">In Cooperation With:</p>
+      <p>Unspecified</p>
+    </section>
+
+    <section class="logo-block">
+      <div>
+        <img src="solver_logo.png" alt="Absolute Solver Logo" />
+        <p class="label" style="text-align:center; margin-top:1rem;">PROJECT LOGO</p>
+        <button onclick="downloadSolver()">DOWNLOAD ABSOLUTE SOLVER</button>
+
+        <div class="progress">
+          <div>BUILD PROGRESS</div>
+          <div class="bar"><div class="bar-fill" id="progress-fill"></div></div>
+          <div style="margin-top:0.5rem;">CHECKSUM: <span id="checksum">PENDING</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div>Department of Technology — Classified Systems Division</div>
+    <div>Unauthorized access is prohibited.</div>
+  </footer>
+
+  <div class="modal" id="alertModal">
+    <div class="modal-content">
+      <h3>ACCESS DENIED</h3>
+      <p>PROGRAM NOT YET READY</p>
+      <button onclick="closeModal()">ACKNOWLEDGE</button>
+    </div>
+  </div>
+
+  <script>
+    // ====== CONFIG ======
+    const STATUS = 'IN DEVELOPMENT'; // OPERATIONAL | IN DEVELOPMENT | LOCKED
+    const PROGRESS = 10; // percent
+    const CHECKSUM_VALUE = 'A9F3-77C2-Δ';
+
+    // ====== STATUS SETUP ======
+    const statusBox = document.getElementById('status-box');
+    statusBox.textContent = 'STATUS: ' + STATUS;
+
+    if (STATUS === 'OPERATIONAL') statusBox.className = 'status operational';
+    if (STATUS === 'LOCKED') statusBox.className = 'status locked';
+
+    // ====== BOOT SEQUENCE ======
+    const bar = document.getElementById('progress-fill');
+    setTimeout(() => bar.style.width = PROGRESS + '%', 800);
+    setTimeout(() => document.getElementById('checksum').textContent = CHECKSUM_VALUE, 1600);
+
+    // ====== DOWNLOAD HANDLER ======
+    function downloadSolver() {
+      const file = 'AbsoluteSolver.zip';
+      fetch(file, { method: 'HEAD' })
+        .then(r => r.ok ? window.location.href = file : showModal())
+        .catch(showModal);
+    }
+
+    function showModal() {
+      document.getElementById('alertModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('alertModal').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
